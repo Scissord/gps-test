@@ -3,7 +3,6 @@ module.exports = defineConfig({
   transpileDependencies: [
     'quasar'
   ],
-
   pluginOptions: {
     quasar: {
       importStrategy: 'kebab',
@@ -11,7 +10,3 @@ module.exports = defineConfig({
     }
   }
 })
-
-module.exports = {
-  publicPath: '/gps-test/',
-}

@@ -80,16 +80,7 @@ export default {
     return {};
   },
   setup() {
-    const columns = ref([
-      { name: 'Нач. дата', align: 'left', label: '', field: 'startDate' },
-      { name: 'Кон. дата', align: 'left', label: '', field: 'endDate' },
-      { name: 'Пробег, км.', align: 'right', label: '', field: 'mileage' },
-      { name: 'Средний скорость', align: 'right', label: '', field: 'avgSpeed' },
-      { name: 'Общий расход топлива, л.', align: 'right', label: '', field: 'totalFuelConsumption' },
-      { name: 'Моточасы, ч/м', align: 'left', label: '', field: 'hours' },
-      { name: 'Расход на 100км,л', align: 'right', label: '', field: 'perHundredConsumption'},
-      { name: 'потребление л/ч', align: 'right', label: '', field: 'intake'}
-    ]);
+    const columns = ref([]);
     const rows = ref([]);
     const fromDateString = ref('2023-08-14 00:00:00')
     const toDateString = ref('2023-08-14 23:59:59')
@@ -103,24 +94,22 @@ export default {
     });
 
     const { tableVisible, resultOfRides, fetchingRides } = useRides(fromDateNumber, toDateNumber)
-
     const fetchRides = () => {
       fetchingRides().then(() => {
-        for(let i = 0; i < resultOfRides.value.schema.fields.length; i++) {
-          columns.value[i].label = resultOfRides.value.schema.fields[i].name.toUpperCase();
-        }
-        for (let i = 0; i < resultOfRides.value.data.length; i++) {
-          rows.value[i] = {
-            ...rows.value[i],
-            startDate: resultOfRides.value.data[i]['Нач. дата'],
-            endDate: resultOfRides.value.data[i]['Кон. дата'],
-            mileage: resultOfRides.value.data[i]['Пробег, км.'],
-            avgSpeed: resultOfRides.value.data[i]['Средний скорость'],
-            totalFuelConsumption: resultOfRides.value.data[i]['Общий расход топлива, л.'],
-            hours: resultOfRides.value.data[i]['Моточасы, ч/м'],
-            perHundredConsumption: resultOfRides.value.data[i]['Расход на 100км,л'],
-            intake: resultOfRides.value.data[i]['потребление л/ч']
-          };
+        if (resultOfRides.value && resultOfRides.value.schema && resultOfRides.value.data) {
+          columns.value = resultOfRides.value.schema.fields.map(field => ({
+            name: field.name,
+            label: field.name.toUpperCase(),
+            field: field.name,
+          }));
+
+          rows.value = resultOfRides.value.data.map(item => {
+            const row = {};
+            columns.value.forEach(column => {
+              row[column.field] = item[column.field];
+            });
+            return row;
+          });
         }
       });
     };

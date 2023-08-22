@@ -4,13 +4,13 @@
         flat bordered
         :rows="rows"
         :columns="columns"
-        row-key="startDate"
+        row-key="Нач. дата"
         :separator="separator"
         selection="single"
         v-model:selected="selected"
         @update:selected="fetchCoordinates"
     />
-    <custom-map v-if="selected.length > 0" :coords="toMap"/>
+    <custom-map v-if="mapVisible" :coords="toMap"/>
   </div>
 </template>
 
@@ -58,17 +58,18 @@ export default {
     });
     const toMap = ref([])
 
-    const { decodedPolyline, fetchingCoordinates } = useCoordinates(fromDateNumber, toDateNumber);
+    const { mapVisible, decodedPolyline, fetchingCoordinates } = useCoordinates(fromDateNumber, toDateNumber);
     const fetchCoordinates = async () => {
       if (selected.value.length > 0) {
-        fromDateString.value = selected.value[0].startDate;
-        toDateString.value = selected.value[0].endDate;
+        fromDateString.value = selected.value[0]['Нач. дата'];
+        toDateString.value = selected.value[0]['Кон. дата'];
         await fetchingCoordinates();
         toMap.value = decodedPolyline.value;
       }
     };
 
     return {
+      mapVisible,
       fetchCoordinates,
       toMap,
       selected,

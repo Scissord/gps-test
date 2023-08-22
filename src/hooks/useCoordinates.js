@@ -3,6 +3,7 @@ import { ref } from "vue";
 import Polyline from "google-polyline";
 
 export default function useCoordinates(fromDateNumber, toDateNumber) {
+    const mapVisible = ref(false);
     const encodedPolyline = ref('');
     const decodedPolyline = ref([]);
     const id = 43;
@@ -23,12 +24,15 @@ export default function useCoordinates(fromDateNumber, toDateNumber) {
             });
             encodedPolyline.value = response.data;
             decodedPolyline.value = Polyline.decode(encodedPolyline.value);
+            mapVisible.value = true;
         }catch (e) {
-            alert(e);
+            alert('Ошибка во время запроса');
+            mapVisible.value = false;
         }
     }
 
     return {
+        mapVisible,
         decodedPolyline,
         fetchingCoordinates
     };
